@@ -1,42 +1,87 @@
+import { useState } from "react";
+
 export const Contact = () => {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    message: ""
+  });
+
+  const [errors, setErrors] = useState({});
+
+  // Validation function
+  const validate = () => {
+    const newErrors = {};
+    if (!form.name.trim()) newErrors.name = "Name is required";
+    if (!form.email.trim()) newErrors.email = "Email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+      newErrors.email = "Invalid email format";
+    if (!form.message.trim()) newErrors.message = "Message is required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    // Form submission logic
+    console.log("Contact Form Submitted:", form);
+    alert("Message sent successfully!");
+
+    // Reset form
+    setForm({ name: "", email: "", message: "" });
+    setErrors({});
+  };
+
   return (
-    <div className="max-w-5xl mx-auto px-6 py-10">
-      <h1 className="text-3xl font-bold text-center mb-6">Contact Us</h1>
-
-      <p className="text-gray-700 text-center mb-5">
-        Have any questions? We are here to help you.
-      </p>
-
-      <div className="max-w-md mx-auto bg-white shadow-lg p-6 rounded-lg">
-        <form className="space-y-4">
+    <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded shadow">
+      <h2 className="text-2xl font-bold mb-4 text-center">Contact Us</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label className="block mb-1">Name</label>
           <input
             type="text"
             placeholder="Your Name"
-            className="w-full border p-2 rounded focus:outline-blue-500"
+            className="border p-2 w-full rounded"
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
           />
+          {errors.name && <div className="text-red-500 mt-1">{errors.name}</div>}
+        </div>
 
+        <div className="mb-4">
+          <label className="block mb-1">Email</label>
           <input
             type="email"
             placeholder="Your Email"
-            className="w-full border p-2 rounded focus:outline-blue-500"
+            className="border p-2 w-full rounded"
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
           />
+          {errors.email && <div className="text-red-500 mt-1">{errors.email}</div>}
+        </div>
 
+        <div className="mb-4">
+          <label className="block mb-1">Message</label>
           <textarea
             placeholder="Your Message"
-            rows="4"
-            className="w-full border p-2 rounded focus:outline-blue-500"
-          ></textarea>
+            className="border p-2 w-full rounded"
+            rows="5"
+            value={form.message}
+            onChange={(e) => setForm({ ...form, message: e.target.value })}
+          />
+          {errors.message && <div className="text-red-500 mt-1">{errors.message}</div>}
+        </div>
 
-          <button className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-            Send Message
-          </button>
-        </form>
-      </div>
-
-      <div className="text-center mt-8 text-gray-700">
-        📞 Phone: +91 9876543210 <br />
-        ✉ Email: support@usedmarket.in
-      </div>
+        <button
+          type="submit"
+          className="bg-blue-500 text-white w-full py-2 rounded hover:bg-blue-700"
+        >
+          Send Message
+        </button>
+      </form>
     </div>
   );
 };
